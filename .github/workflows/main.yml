@@ -34,7 +34,9 @@ jobs:
         java-version: 11
     
     - name: Build with Gradle
-      run: ./gradlew --no-daemon clean assembleDebug testDebug
+      run: |
+        chmod=+x build.cmd
+        ./gradlew --no-daemon clean assembleDebug testDebug
     
     - name: Build web
       #working-directory: /
