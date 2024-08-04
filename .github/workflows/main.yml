@@ -1,0 +1,53 @@
+name: Released
+
+# 触发条件: 这里是push以”v“开头的tag触发
+on:
+  push:
+    # 根据branch或者tags来触发
+    # branches:
+    #  - main
+
+    tags:
+      - "v*"
+
+#name: Build
+
+#on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+#  push:
+#    branches:
+#      - main
+#  pull_request:
+#    types: [opened, synchronize]
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'temurin'
+        java-version: 11
+    
+    - name: Build with Gradle
+      run: ./gradlew --no-daemon clean assembleDebug testDebug
+    
+    - name: Build web
+      #working-directory: /
+      run: |
+        ver=$(pwd)
+        echo "当前路径 $ver"   
+        ver=$(find . -name *.apk)
+        echo "查找到的apk $ver"
+        #zip -r assets ./ui/**
+        #ver=$(ls -la)
+        #echo "当前文件路径 $ver
+    - uses: actions/upload-artifact@v2
+      with:
+        name: upload-apk
+        path: |
+          ${{github.workspace}}/app/build/outputs/apk/debug/*.apk
+      
